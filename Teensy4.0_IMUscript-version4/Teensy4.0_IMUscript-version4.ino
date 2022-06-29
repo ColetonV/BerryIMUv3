@@ -275,6 +275,11 @@ void loop() {
   pressRaw = (int)(buff[0] | (buff[1] << 8) | (buff[2] << 16));
   float comp_press = press_compensation(pressRaw,comp_temp);
   //Serial.println(comp_press); //Pressure in Pa 
+
+  //Altitude (in meters)
+  //https://www.circuitbasics.com/set-bmp180-barometric-pressure-sensor-arduino/
+  float ref_ground_press = 101968.60;
+  float alt = 44330*(1-pow((comp_press/ref_ground_press),(1/5.255))); //In meters
   
   //---------------------------------------------------------------------------------------
   
@@ -284,10 +289,11 @@ void loop() {
 //  Serial.print(",");
 //  Serial.println(AccZraw);
 
-  Serial.print(comp_temp);
-  Serial.print(",");
-  Serial.println(comp_press);
-
+//  Serial.print(comp_temp);
+//  Serial.print(",");
+//  Serial.print(comp_press);
+//  Serial.print(",");
+  Serial.println(alt);
 //    Serial.print(buff[0]);
 //    Serial.print(",");
 //    Serial.print(buff[1]);
@@ -326,6 +332,10 @@ float press_compensation(float raw_pressure, float comp_temp) {
   float partial_data4 = partial_data3+(raw_pressure*raw_pressure*raw_pressure)*PAR_P11;
   float comp_press = partial_out1+partial_out2+partial_data4;
   return comp_press;
+}
+
+float get_altitude(){
+  
 }
 
 void writeTo(int device, byte address, byte val) {
